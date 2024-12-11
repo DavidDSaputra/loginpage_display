@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Register</title>
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="container">
         <div class="login-form">
-            <h2>Selamat Datang</h2>
-            <form action="{{ route('login') }}" method="POST" id="loginForm">
+            <h2>Daftar Akun</h2>
+            <form action="{{ route('register') }}" method="POST" id="registerForm">
                 @csrf
                 <div class="input-group">
                     <label for="username">Username</label>
@@ -21,9 +21,12 @@
                     <label for="password">Password</label>
                     <input type="password" name="password" id="password" placeholder="Password" required>
                 </div>
-                <a href="#" class="forgot-password">Lupa Password</a>
-                <button type="submit" class="btn-login">Masuk</button>
-                <p class="register-text">Belum Punya Akun? <a href="{{ route('register') }}">Daftar</a></p>
+                <div class="input-group">
+                    <label for="password_confirmation">Konfirmasi Password</label>
+                    <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Konfirmasi Password" required>
+                </div>
+                <button type="submit" class="btn-login">Daftar</button>
+                <p class="register-text">Sudah Punya Akun? <a href="{{ route('login') }}">Masuk</a></p>
             </form>
         </div>
         <div class="login-image">
@@ -32,21 +35,11 @@
     </div>
 
     <script>
-        // Menampilkan SweetAlert setelah login berhasil
         @if(session('success'))
         Swal.fire({
             icon: 'success',
-            title: 'Login Berhasil',
+            title: 'Pendaftaran Berhasil',
             text: '{{ session('success') }}',
-            showConfirmButton: false,
-            timer: 2000
-        });
-        @endif
-        @if(session('warning'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Logout Berhasil',
-            text: '{{ session('warning') }}',
             showConfirmButton: false,
             timer: 2000
         });

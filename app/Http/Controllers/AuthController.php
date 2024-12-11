@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Akun; // Pastikan model User terhubung
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -19,22 +20,50 @@ class AuthController extends Controller
             'username' => 'required',
             'password' => 'required',
         ]);
-
-        $credentials = $request->only('username', 'password');
-
-        if (Auth::attempt($credentials)) {
-            // Jika login berhasil
-            return redirect()->intended('/dashboard');
+    
+        $akun = Akun::where('username', $request->username)->first();
+    
+        if ($akun && Hash::check($request->password, $akun->password)) {
+            $request->session()->put('username', $akun->username);
+            return redirect()->route('dashboard')->with('success', 'Selamat datang, Anda berhasil login!');
         }
-
-        // Jika login gagal
-        return redirect()->back()->with('error', 'Username atau password salah.');
+    
+        return back()->withErrors([
+            'username' => 'Username atau password salah.',
+        ])->onlyInput('username');
+    }
+    public function showRegisterForm()
+    {
+        return view('auth.register');
     }
 
-    public function logout()
+    public function register(Request $request)
+    {
+        // Validasi input
+    $request->validate([
+        'username' => 'required|unique:akuns,username|max:255',
+        'password' => 'required|min:8|confirmed',
+    ]);
+
+    // Debug data input sebelum disimpan
+    dd($request->all()); // Berhenti di sini untuk melihat data input
+
+    // Simpan data akun baru
+    $akun = Akun::create([
+        'username' => $request->username,
+        'password' => Hash::make($request->password),
+    ]);
+    
+
+    return redirect()->route('login')->with('success', 'Akun berhasil dibuat! Silakan login.');
+    }
+
+    public function logout(Request $request)
     {
         Auth::logout();
-        return redirect('/login');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login')->with('warning', 'Logout berhasil! Sampai jumpa lagi.');
     }
 }
-

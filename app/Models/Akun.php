@@ -9,8 +9,12 @@ class Akun extends Authenticatable
 {
     use HasFactory;
 
-    protected $table = 'akuns'; // Nama tabel di database
-    protected $fillable = ['username', 'password']; // Kolom yang dapat diisi
+    protected $table = 'akuns';
 
-    protected $hidden = ['password']; // Sembunyikan password saat data dikembalikan
+    protected $fillable = [
+        'username',
+        'password',
+    ];
+
+    public $timestamps = true; // Sesuaikan dengan kolom `created_at` dan `updated_at` di tabel `akuns`
 }
