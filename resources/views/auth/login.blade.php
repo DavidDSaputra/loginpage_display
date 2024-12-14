@@ -21,9 +21,9 @@
                     <label for="password">Password</label>
                     <input type="password" name="password" id="password" placeholder="Password" required>
                 </div>
-                <a href="#" class="forgot-password">Lupa Password</a>
+                
                 <button type="submit" class="btn-login">Masuk</button>
-                <p class="register-text">Belum Punya Akun? <a href="{{ route('register') }}">Daftar</a></p>
+                
             </form>
         </div>
         <div class="login-image">
@@ -51,6 +51,7 @@
             timer: 2000
         });
         @endif
+      
     </script>
 </body>
 </html>

@@ -21,10 +21,14 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
     
+        // Cari akun berdasarkan username
         $akun = Akun::where('username', $request->username)->first();
     
         if ($akun && Hash::check($request->password, $akun->password)) {
-            $request->session()->put('username', $akun->username);
+            // Login menggunakan Auth::login() agar Laravel mengenali sesi pengguna
+            Auth::login($akun);  // Login pengguna
+    
+            // Redirect ke dashboard
             return redirect()->route('dashboard')->with('success', 'Selamat datang, Anda berhasil login!');
         }
     
@@ -32,38 +36,15 @@ class AuthController extends Controller
             'username' => 'Username atau password salah.',
         ])->onlyInput('username');
     }
-    public function showRegisterForm()
-    {
-        return view('auth.register');
-    }
-
-    public function register(Request $request)
-    {
-        // Validasi input
-    $request->validate([
-        'username' => 'required|unique:akuns,username|max:255',
-        'password' => 'required|min:8|confirmed',
-    ]);
-
-    // Debug data input sebelum disimpan
-    dd($request->all()); // Berhenti di sini untuk melihat data input
-
-    // Simpan data akun baru
-    $akun = Akun::create([
-        'username' => $request->username,
-        'password' => Hash::make($request->password),
-    ]);
-    
-
-    return redirect()->route('login')->with('success', 'Akun berhasil dibuat! Silakan login.');
-    }
 
     public function logout(Request $request)
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+{
+    Auth::logout();  // Logout pengguna
+    $request->session()->invalidate();  // Hapus sesi
+    $request->session()->regenerateToken();  // Hapus token CSRF
 
-        return redirect('/login')->with('warning', 'Logout berhasil! Sampai jumpa lagi.');
-    }
+    return redirect('/login')->with('warning', 'Logout berhasil! Sampai jumpa lagi.');
+}
+
+    
 }
